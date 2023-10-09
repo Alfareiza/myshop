@@ -5,17 +5,20 @@ from django.urls import reverse
 class Category(models.Model):
     name = models.CharField(max_length=200, db_index=True)
     slug = models.SlugField(max_length=200, unique=True)
-    
+
     class Meta:
-        ordering = ('name', )
+        ordering = ('name',)
         verbose_name = 'category'
         verbose_name_plural = 'categories'
 
     def get_absolute_url(self):
         return reverse('shop:product_list_by_category', args=[self.slug])
 
-class Product(models.Model):
+    def __str__(self):
+        return self.name
 
+
+class Product(models.Model):
     # one-to-many relation, one product belongs to a one category
     # and a category has many products
     category = models.ForeignKey(Category, related_name='products',
@@ -31,13 +34,12 @@ class Product(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ('name', )
+        ordering = ('name',)
         # with the objective of improving performance
         # is created this index with id and slug.
         # because they will be consulted together
-        index_together = (('id', 'slug'), )
+        index_together = (('id', 'slug'),)
 
-    
     def __str__(self):
         return self.name
 
