@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-  {{ product.name.title }}
+  {{ product.name.capitalize }}
 {% endblock %}
 
 {% block content %}
@@ -12,10 +12,17 @@
     <h1>{{ product.name.title }}</h1>
     <h2>
       <a href="{{ product.category.get_absolute_url }}">
-        {{ product.category.title }}
+        {{ product.category.name.title }}
       </a>
     </h2>
     <p class="price">${{ product.price }}</p>
+    <form action="{% url 'cart:cart_add' product.id %}" method="post">
+      <!--This form is created here because is sent by the view shop.views.product_detail
+      So, that's how is fully rendered-->
+      {{ cart_product_form }}
+      {% csrf_token %}
+      <input type="submit" value="Add to cart">
+    </form>
     {{ product.description|linebreaks }}
   </div>
 {% endblock %}
