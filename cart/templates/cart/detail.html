@@ -63,7 +63,8 @@
     </tbody>
   </table>
   <p class="text-right">
-    <a href="{% url "shop:product_list" %}" class="button light">Continue shopping</a>
-    <a href="#" class="button">Checkout</a>
+    <a href="{% url 'shop:product_list' %}" class="button light">Continue shopping</a>
+    <!-- ⬇︎ Now the users can navigate from the detail of cart to the detail of the order urls.py ⬇ -->
+    <a href="{% url 'orders:order_create' %}" class="button">Checkout</a>
   </p>
 {% endblock %}
