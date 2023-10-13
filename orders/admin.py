@@ -3,6 +3,8 @@ import datetime
 
 from django.contrib import admin
 from django.http import HttpResponse
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from orders.models import OrderItem, Order
 
@@ -64,6 +66,15 @@ def export_to_csv(modeladmin, request, queryset):
 export_to_csv.short_description = 'Export to CSV'
 
 
+def order_detail(obj):
+    """From an Order object calculate his url and return it.
+    This function is created to be appended in the list_display list
+    of the OrderAdmin to create an option to view the detail.html of
+    the orde. Ex: http://localhost:8001/orders/admin/order/3/"""
+    url = reverse('orders:admin_order_detail', args=[obj.id])
+    return mark_safe(f'<a href="{url}"> View</a>')
+
+
 class OrderItemInline(admin.TabularInline):
     # An TabularInline allow to include a model in the same
     # page of modification of a model related to him
@@ -75,7 +86,9 @@ class OrderItemInline(admin.TabularInline):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['id', 'first_name', 'last_name', 'email',
                     'address', 'postal_code', 'city', 'paid',
-                    'created', 'updated']
+                    'created', 'updated',
+                    order_detail  # This function open the possibility to have a view in the admin django site
+                    ]
     list_filter = ['paid', 'created', 'updated']
     inlines = [OrderItemInline]
     actions = [export_to_csv]
