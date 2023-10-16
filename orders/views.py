@@ -4,6 +4,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render, get_object_or_404
 
 from .tasks import order_created
 from cart.cart import Cart
@@ -46,6 +48,12 @@ def order_create(request):
                   'orders/order/create.html',
                   {'cart': cart, 'form': form})
 
+
+@staff_member_required  # Verify if is_active and is_staff are True
+def admin_order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    return render(request, 'admin/orders/order/detail.html',
+                  {'order': order})
 
 @staff_member_required
 def admin_order_pdf(request, order_id):
