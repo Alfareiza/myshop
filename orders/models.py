@@ -1,4 +1,9 @@
+from decimal import Decimal
+
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+
+from coupons.models import Coupon
 from shop.models import Product
 
 
@@ -12,6 +17,13 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)  # Will tell us if the order is paid or not
+    coupon = models.ForeignKey(Coupon, related_name='orders',
+                               null=True,
+                               blank=True,
+                               on_delete=models.SET_NULL)  # If the coupon is removed this value on the Order will be NULL
+    discount = models.IntegerField(default=0,
+                                   validators=[MinValueValidator(0),
+                                               MaxValueValidator(100)])
 
     class Meta:
         ordering = ('-created',)
@@ -20,7 +32,8 @@ class Order(models.Model):
         return f'Order {self.id}'
 
     def get_total_cost(self):
-        return sum(item.get_cost() for item in self.items.all())
+        total_cost = sum(item.get_cost() for item in self.items.all())
+        return total_cost - total_cost * (self.discount / Decimal(100))
 
 
 class OrderItem(models.Model):
