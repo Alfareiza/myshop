@@ -29,7 +29,14 @@ def order_create(request):
     if request.method == 'POST':
         form = OrderCreateForm(request.POST)
         if form.is_valid():
-            order = form.save()
+            order = form.save(commit=False)  # Is not still saved in db
+            # If the cart has a coupon, then
+            # save the coupon associated and his discount
+            if cart.coupon:
+                order.coupon = cart.coupon
+                order.discount = cart.coupon.discount
+            # New object order is created
+            order.save()
             for item in cart:
                 OrderItem.objects.create(order=order,
                                          product=item['product'],
@@ -38,7 +45,7 @@ def order_create(request):
                 # Clean the cart
                 cart.clear()
                 # Trigger an async task (Celery)
-                order_created.delay(order.id)
+                # order_created.delay(order.id)
                 return render(request,
                               'orders/order/created.html',
                               {'order': order})
