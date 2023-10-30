@@ -1,5 +1,6 @@
 {% extends "shop/base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}
   {% trans "Your shopping cart" %}
@@ -62,7 +63,7 @@
           <td class="num">${{ cart.get_total_price|floatformat:2 }}</td>
         </tr>
         <tr>
-          {% blocktranswith code=cart.coupon.code discount=cart.coupon.discount %}
+          {% blocktrans with code=cart.coupon.code discount=cart.coupon.discount %}
             <td>"{{ code }}" coupon ({{ discount }}% off)</td>
           {% endblocktrans %}
           <td colspan="4"></td>
