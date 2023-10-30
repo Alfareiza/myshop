@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'coupons.apps.CouponsConfig',
     'rosetta',
+    'localflavor'
 ]
 
 MIDDLEWARE = [
@@ -140,3 +141,7 @@ STATIC_ROOT = BASE_DIR / 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CART_SESSION_ID = 'cart'
+
+# Allow to work with localization and formats
+# from the host is accessing to our site
+USE_L10N = True
